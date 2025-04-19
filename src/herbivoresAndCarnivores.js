@@ -23,23 +23,67 @@ class Herbivore extends Animal {
   hide() {
     this.hidden = true;
   }
-}
+class BaseRobot {
+  constructor(name, weight, coords, chipVersion) {
+    this.name = name;
+    this.weight = weight;
+    this.coords = coords ? { ...coords } : { x: 0, y: 0 };
+    this.chipVersion = chipVersion;
+  }
 
-class Carnivore extends Animal {
-  bite(target) {
-    // Verifica se o alvo é um Herbívoro, não está escondido e está vivo
-    if (target instanceof Herbivore && !target.hidden) {
-      target.health -= 50;
+  goForward(step = 1) {
+    this.coords.y += step;
+  }
 
-      if (target.health <= 0) {
-        target.die();
-      }
-    }
+  goBack(step = 1) {
+    this.coords.y -= step;
+  }
+
+  goRight(step = 1) {
+    this.coords.x += step;
+  }
+
+  goLeft(step = 1) {
+    this.coords.x -= step;
+  }
+
+  getInfo() {
+    return `Robot: ${this.name}, Chip version: ${this.chipVersion}, Weight: ${this.weight}`;
   }
 }
 
-module.exports = {
-  Animal,
-  Herbivore,
-  Carnivore,
-};
+class FlyingRobot extends BaseRobot {
+  constructor(name, weight, coords, chipVersion) {
+    super(name, weight, coords, chipVersion);
+    // Garante que a coordenada z existe
+    if (this.coords.z === undefined) {
+      this.coords.z = 0;
+    }
+  }
+
+  goUp(step = 1) {
+    this.coords.z += step;
+  }
+
+  goDown(step = 1) {
+    this.coords.z -= step;
+  }
+}
+
+class DeliveryDrone extends FlyingRobot {
+  constructor(name, weight, coords, chipVersion, maxLoadWeight, currentLoad = null) {
+    super(name, weight, coords, chipVersion);
+    this.maxLoadWeight = maxLoadWeight;
+    this.currentLoad = currentLoad;
+  }
+
+  hookLoad(cargo) {
+    if (!this.currentLoad && cargo.weight <= this.maxLoadWeight) {
+      this.currentLoad = cargo;
+    }
+  }
+
+  unhookLoad() {
+    this.currentLoad = null;
+  }
+}
