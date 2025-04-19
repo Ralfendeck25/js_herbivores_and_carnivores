@@ -10,7 +10,7 @@ class Animal {
   }
 
   die() {
-    Animal.alive = Animal.alive.filter(animal => animal !== this);
+    Animal.alive = Animal.alive.filter((animal) => animal !== this);
   }
 }
 
@@ -26,14 +26,23 @@ class Herbivore extends Animal {
 }
 
 class Carnivore extends Animal {
-  bite(target) {
-    // Verifica se o alvo é um Herbívoro, não está escondido e está vivo
-    if (target instanceof Herbivore && !target.hidden) {
-      target.health -= 50;
+  constructor(name) {
+    super(name);
+  }
 
-      if (target.health <= 0) {
-        target.die();
-      }
+  bite(target) {
+    if (!(target instanceof Herbivore)) {
+      return;
+    }
+
+    if (target.hidden) {
+      return;
+    }
+
+    target.health -= 50;
+
+    if (target.health <= 0) {
+      target.die();
     }
   }
 }
